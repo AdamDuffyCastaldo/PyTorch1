@@ -9,19 +9,10 @@ def Load_image(path):
     img = cv2.imread(path)
     return img
 
-img = Load_image("tilthead.jpg")
+path = input("Enter the path to your image: ")
+img = Load_image(path)
 
-def OpenCamera():
-    videofeed = cv2.VideoCapture(0)
-    while True:
-        ret, frame = videofeed.read()
-        cv2.imshow("frame", frame)
 
-        if cv2.waitKey(1) & 0xFF == ord("q"):
-            break
-
-    videofeed.release()
-    cv2.destroyAllWindows()
 
 detector = dlib.get_frontal_face_detector()
 prediction = dlib.shape_predictor("shape_predictor_5_face_landmarks.dat")
@@ -37,6 +28,14 @@ if len(rectangle) > 0:
         w = rect.right()
         h = rect.bottom()
         shape = prediction(grayscale, rect)
+
+        for i in range(shape.num_parts):
+            part = shape.part(i)
+            cv2.circle(img, (part.x, part.y), 3, (0, 255, 0), -1)  # Green circle
+        
+        # Draw bounding box
+        cv2.rectangle(img, (x, y), (w, h), (255, 0, 0), 2)  # Blue rectangle
+
         print(shape)
 
 
@@ -100,6 +99,8 @@ if inside(nose, centre, centre_prediction, new_rotated_point):
     angle = np.degrees(-angle)
 else:
     angle = np.degrees(angle)
+
+
 
 img = Image.fromarray(img)
 img = np.array(img.rotate(angle))

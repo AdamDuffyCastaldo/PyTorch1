@@ -62,23 +62,17 @@ class Encoder(nn.Module):
         return self.encoder(images)
     
     def isSame(self, image1, image2, threshold=0.01):
-        #self.eval()
+
         
         emb1 = self(image1)
         emb2 = self(image2)
         return self.emb_match(emb1, emb2)
     
-        # mse = mse.mean().item()
-        # return mse < threshold
+
     def emb_match(self, emb1, emb2):
         mse = F.mse_loss(emb1, emb2, reduction="none")
         similarity_score = self.classifier(mse)
         max_similarity_score, max_position = similarity_score.max(dim=1)  # Find the maximum value and its position
-        print(max_similarity_score, max_position)
-        # similarity_score = self.classifier(mse)
-        # print(f"similarity score = {similarity_score}")
-        # similarity_probability = torch.sigmoid(similarity_score)
-        # print(f"Similarity prob:{similarity_probability}")
-        # mean_similarity = similarity_probability.mean()
-        # print(mean_similarity)
+ 
+ 
         return max_position
